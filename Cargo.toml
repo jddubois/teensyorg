@@ -1,0 +1,23 @@
+[package]
+name = "teensy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rtic = { version = "2", features = ["thumbv7-backend"] }
+rtic-monotonics = { version = "1", default-features = false, features = ["cortex-m-systick"] }
+
+teensy4-panic = { version = "0.2", features = ["log"] }
+
+usb-device = "0.2.9"
+usbd-midi = "0.2.0"
+imxrt-hal = "0.5.9"
+
+[dependencies.teensy4-bsp]
+version = "0.5.0"
+features = [
+    "rt",
+]
+
+[profile.release.build-override]
+opt-level = 0
