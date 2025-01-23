@@ -8,4 +8,5 @@ mod debounce;
 mod gpio;
 mod midi;
 mod run;
+mod sensor;
 mod usb;

@@ -1,7 +1,7 @@
 #[rtic::app(device = teensy4_bsp, peripherals = true, dispatchers = [KPP])]
 mod app {
 
-    use crate::{gpio, run, usb};
+    use crate::{gpio, run, sensor::Sensor, usb};
 
     use teensy4_bsp::{
         board,
@@ -14,7 +14,7 @@ mod app {
     struct Local {
         usb_device: UsbDevice<'static, BusAdapter>,
         midi: MidiClass<'static, BusAdapter>,
-        sensors: [gpio::Sensor; 2],
+        sensors: [Sensor; 32],
         led: board::Led,
         is_usb_configured: bool,
     }
@@ -29,9 +29,15 @@ mod app {
     ])]
     fn init(cx: init::Context) -> (Shared, Local) {
         let board::Resources {
-            usb, pins, gpio2, ..
+            usb,
+            pins,
+            gpio1,
+            gpio2,
+            gpio3,
+            gpio4,
+            ..
         } = board::t41(cx.device);
-        let (sensors, led) = gpio::init_gpio(gpio2, pins);
+        let (sensors, led) = gpio::init_gpio(gpio1, gpio2, gpio3, gpio4, pins);
         let (midi, usb_device) = usb::init_usb(
             BusAdapter::with_speed(usb, cx.local.ep_memory, cx.local.ep_state, Speed::LowFull),
             cx.local.usb_bus,

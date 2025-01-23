@@ -1,4 +1,4 @@
-use crate::gpio::Sensor;
+use crate::sensor::Sensor;
 
 use teensy4_bsp::hal::usbd::BusAdapter;
 use usbd_midi::{
@@ -11,11 +11,12 @@ use usbd_midi::{
 };
 
 pub fn send_message(midi: &mut MidiClass<BusAdapter>, sensor: &Sensor, value: bool) {
-    midi.send_message(UsbMidiEventPacket::from_midi(
+    while (midi.send_message(UsbMidiEventPacket::from_midi(
         CableNumber::Cable0,
         message_from_value(sensor, value),
-    ))
-    .unwrap();
+    )))
+    .is_err()
+    {}
 }
 
 fn message_from_value(sensor: &Sensor, value: bool) -> Message {
